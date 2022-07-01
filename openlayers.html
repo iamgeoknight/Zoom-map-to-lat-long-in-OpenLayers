@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Lat Lon</title>
+        <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div style="position: absolute;z-index: 9999;background: white;padding: 10px;right: 0;">
+            lat: <input type="text" id = 'lat' value = '-0.1275'></input>
+            lon: <input type="text" id = 'lon' value = '51.507222'></input>
+            <button id = "submit">Zoom map to coordinates in OpenLayers</button>
+        </div>        
+        <div id = "map">
+            <div id = "popup"></div>  
+        </div>
+    </body>
+    <script>
+        //Define Map
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-0.1275, 51.507222]),
+                zoom: 9
+            })
+        });
+
+        // Define overlay popup for dislayong lat lon
+        var element = document.getElementById("popup")
+        var overlay = new ol.Overlay({
+            element: element,
+            offset: [0, -15],
+            positioning: 'bottom-center',
+            className: 'ol-tooltip-measure ol-tooltip .ol-tooltip-static'
+        });
+        overlay.setPosition([0,0]);
+        overlay.element.style.display = 'block';      
+        map.addOverlay(overlay); 
+
+        // Get lat lon from inputs and zoom to lat lon on map
+        document.getElementById('submit').addEventListener('click', function() {
+            var lat = parseFloat(document.getElementById('lat').value);
+            var lon = parseFloat(document.getElementById('lon').value);
+            map.setView(
+                new ol.View({
+                center: ol.proj.fromLonLat([lat, lon]),
+                zoom: 17
+            }));
+            overlay.element.innerHTML = 'Lat: ' + lat + '<br/> Lon: ' + lon;
+
+            // COnverting lat long to mercator projection
+            overlay.setPosition(ol.proj.fromLonLat([lat, lon]));
+        });
+    </script>
+</html>
