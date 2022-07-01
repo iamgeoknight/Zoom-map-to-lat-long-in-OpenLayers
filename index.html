@@ -46,15 +46,20 @@
         document.getElementById('submit').addEventListener('click', function() {
             var lat = parseFloat(document.getElementById('lat').value);
             var lon = parseFloat(document.getElementById('lon').value);
+
+            // Converting lat long to mercator projection
+            proj_lat_long = ol.proj.fromLonLat([lat, lon])
+
+            // Zoom to lat lon
             map.setView(
                 new ol.View({
-                center: ol.proj.fromLonLat([lat, lon]),
+                center: proj_lat_long,
                 zoom: 17
             }));
             overlay.element.innerHTML = 'Lat: ' + lat + '<br/> Lon: ' + lon;
 
-            // COnverting lat long to mercator projection
-            overlay.setPosition(ol.proj.fromLonLat([lat, lon]));
+            // Set popup position to lat lon
+            overlay.setPosition(proj_lat_long);
         });
     </script>
 </html>
